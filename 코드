@@ -1,0 +1,96 @@
+local setting = {"minecraft:wheat",
+                 "minecraft:planks",
+                 "minecraft:cobblestone",
+                 "TConstruct:CraftingStation",
+                 "minecraft:wheat_seeds"}
+
+function Filt(In)
+  local Num,N
+  local Se = {}
+  turtle.select(16)
+  Num = turtle.getItemCount()
+  if Num < 64 then
+    N = 1
+    while N < 15 do
+      turtle.select(N)
+      if turtle.getItemCount() == 0 then
+      else
+        Se = turtle.getItemDetail()
+        if Se.name == setting[5] then
+          if Num >= 64 then
+            break
+          end
+          turtle.transferTo(16,64-Num)
+          turtle.select(16)
+          Num = turtle.getItemCount()
+        end
+      end
+      N = N + 1
+    end
+  end
+  if In == 1 then
+    N = 1
+    turtle.turnRight()
+    while N < 15 do
+      turtle.select(N)
+      turtle.drop()
+      N = N + 1
+    end
+    turtle.select(15)
+    if turtle.getItemCount() < 64 then
+      turtle.suckUp(64-turtle.getItemCount())
+    end  
+    turtle.turnLeft()
+    turtle.turnLeft()
+    sleep(120)
+  end
+  turtle.forward()
+  turtle.select(16)
+end
+        
+
+
+function Dtest()
+  local Du
+  local Bf = {}
+  Du, Bf = turtle.inspectDown()
+  if Bf.name == setting[1] then
+    --wheat
+    if Bf.metadata == 7 then
+      turtle.digDown()
+      turtle.placeDown()
+      turtle.forward()
+    else
+      turtle.forward()
+    end
+  elseif Bf.name == setting[2] then
+    --Planks
+    turtle.turnLeft()
+    turtle.forward()
+  elseif Bf.name == setting[3] then
+    --cobblestone
+    turtle.turnRight()
+    turtle.forward()
+  elseif Bf.name == setting[4] then
+    --CraftingStation
+    Filt(1)
+  else
+    turtle.forward()
+  end
+  turtle.attack()
+end
+
+
+turtle.select(16)
+while true do
+  Dtest()
+  if turtle.getItemCount() < 1 then
+    Filt(0)
+  end
+  if turtle.getFuelLevel() <= 500 then
+    turtle.select(15)
+    turtle.refuel(1)
+    turtle.select(16)
+  end
+  print(turtle.getFuelLevel())
+end
